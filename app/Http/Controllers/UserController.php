@@ -147,4 +147,19 @@ class UserController extends Controller
     {
         //
     }
+
+    public function findEmail(Request $request){
+        $request->all();
+        $user = User::where('email', $request['email'])->first();
+        if($user){
+            $response=[
+                'email'=>$user->email,
+            ];
+            return response()->json($response);
+        }
+        else{
+            $response=['message'=>"error not found"];
+            return response()->json($response,404);
+        }
+    }
 }
