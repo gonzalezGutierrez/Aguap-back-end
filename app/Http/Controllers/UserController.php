@@ -1,14 +1,16 @@
 <?php
 
 namespace App\Http\Controllers;
-
+//namespace App\Mail;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use  App\User;
 use Illuminate\Http\Request;
 use Validator;
 use App\Http\Requests\UserRequest;
-
+use App\Mail\sendMail;
+use Mail;
+//use Illuminate\Support\Facades\Mail;
 class UserController extends Controller
 {
     /**
@@ -28,10 +30,8 @@ class UserController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request){  
-        // falta validar que las contraseña sean correctas.
         //validar telefonos que ya existen.
         //validar correos que ya existen.       
-        //validar datos vacios 
         $request->all();
         $user=new User;
         $user->name=$request->name;
@@ -43,21 +43,13 @@ class UserController extends Controller
         $user->confirmation_password=hash::make($request->confirmation_password);
         $user->status=$request->status;
         $user->save();
-        $token= $user->createToken('Token')->accessToken;
-
+        //$token=$user->createToken('Token')->accessToken;
         $response=[
-            'token'=>$token,
-            'id'=>$user->id,
-            'name'=>$user->name,
-            'lastNmae'=>$user->lastName,
-            'email'=>$user->email,
-            'phone'=>$user->phone,
-            'idRol'=>$user->idRol,
-            'status'=>$user->status,
+            'message'=>'confirme su cuenta se le a enviado un email a su correo electronico',
         ];
-        
+        $this->sendConfirmationEmail($user->email);
         return response()->json($response,200);
-       
+
     }
 
     /**
@@ -92,7 +84,7 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id){
+    public function update(Request $request,$id){
         //falta comparar la contraseñas que sean igual
         $request->all();
         $user=User::find($id);
@@ -145,7 +137,49 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        //
+    }
+
+    public function sendConfirmationEmail($email){
+        $user=User::where('email',$email)->first();
+        if($user){
+            $token=$user->createToken('Token')->accessToken;
+            $data=[
+                'name'=>$user->name,
+                'lastName'=>$user->lastName,
+                'id'=>$user->id,
+                'token'=>$token, 
+            ];
+            Mail::to($email)->send(new sendMail($data));
+            return response()->json($data,200);
+        }
+        else{
+            $response=['message'=>"error not found"];
+            return response()->json($response,404);
+        }
+       
+    }
+
+    public function userAccountActivation($id){
+        $user=User::find($id);
+        if($user){
+            $status=1;
+            $user->status=$status;
+            $user->save();
+            $response=[
+                'name'=>$user->name,
+                'lastName'=>$user->lastName,
+                'id'=>$user->id,
+                'idRol'=>$user->idRol,
+                'status'=>$user->status,
+            ];
+            return response()->json($response,200);
+        }
+        else{
+            $response="not found";
+            return response()->json($response,404); 
+        }
+       
+    
     }
 
     public function findEmail(Request $request){
@@ -163,3 +197,4 @@ class UserController extends Controller
         }
     }
 }
+//163223
