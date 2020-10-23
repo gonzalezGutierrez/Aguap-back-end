@@ -24,12 +24,15 @@ Route::get('v1/user/email','UserController@findEmail');
 
 
 Route::middleware(['middleware'=>'auth:api'])->group(function () {
-
     Route::get('v1/user/activate/{id}','UserController@userAccountActivation');
     Route::get('v1/user/{id}','UserController@show');
-    Route::put('v1/user/{id}','UserController@update');
+    Route::put('v1/user/verificationPassword/{id}','UserController@checkMyCurrentpassword');
+    Route::put('v1/user/updateUser/{id}','UserController@updateUser');
+    Route::put('v1/user/updatePassword/{id}','UserController@updatePassword');
+
+
     Route::post('v1/ubication','UbicationController@store');
     Route::get('v1/ubication','UbicationController@index');
     Route::delete('v1/ubication/{id}','UbicationController@destroy');
-    
+
 });
