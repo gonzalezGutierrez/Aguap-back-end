@@ -26,10 +26,10 @@ class AuthServiceProvider extends ServiceProvider{
         $this->registerPolicies();
         Passport::routes();
         Passport::personalAccessClientSecret(
-           config('m8FaM2XRayYrPX4mys77QLn3AMN1FtXbn3hbFseC')
+           config('LR7f3UhgRU3x2dzbOM2PIAHhB48yjO1ou08hi1JS')
         );
         Passport::personalAccessClientId(
-            config('3')
+            config('1')
         );
 
     }

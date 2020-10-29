@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Ubication;
-
+use App\User;
 class UbicationController extends Controller{
     
     public function index(){
@@ -20,14 +20,13 @@ class UbicationController extends Controller{
     public function store(Request $request){
         $request->all();
         $ubication=new Ubication;
-        $ubication->idUser=$request->idUser;
         $ubication->latitude=$request->latitude;
         $ubication->longitude=$request->longitude;
         $ubication->address=$request->address;
         $ubication->IS_GPS=$request->IS_GPS;
+        $ubication->user_id=$request->user_id;
         $ubication->save();
-
-        return response()->json($ubication);
+        return response()->json($ubication,202);
     }
 
     /**
@@ -37,7 +36,18 @@ class UbicationController extends Controller{
      * @return \Illuminate\Http\Response
      */
     public function show($id){
-        //
+        $ubications=User::find($id)->ubications;
+        if($ubications){
+            
+            return response()->json($ubications,202);
+        }
+        else{
+            $message=[
+                'message'=>'not found',
+            ];
+            
+            return response()->json($message,404);
+        }
     }
 
     /**

@@ -11,11 +11,13 @@ class Ubication extends Model{
      * @var array
      */
     protected $fillable = [
-        'idUser','latitude','longitude','address','IS_GPS', 
+        'latitude','longitude','address','IS_GPS', 
     ];
 
    
-
+    public function user(){
+        return $this->belongsTo('App\User');
+    }
    
 
 }

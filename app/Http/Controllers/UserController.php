@@ -82,11 +82,16 @@ class UserController extends Controller
     public function updatePassword(Request $request,$id){
         $user=User::find($id);
         if($user){
-            $user->password=Crypt::encryptString($request->password);
-            $user->confirmation_password=Crypt::encryptString($request->password);
+            $user->update([
+                'password' => $user->password=Crypt::encryptString($request->newPassword),
+                'confirmation_password'=>$user->confirmation_password=Crypt::encryptString($request->newPassword),
+            ]);
+            //$user->password=Crypt::encryptString($request->newPassword);
+            //$user->confirmation_password=Crypt::encryptString($request->newPassword);
             $message=[
-                'mesage'=>'ok'
+                'mesage'=>'ok',
             ];
+            $user->save();
             return response()->json($message,200);
         }
         else{
@@ -94,7 +99,7 @@ class UserController extends Controller
             return response()->json($response,404);   
         }
     }
-    public function checkMyCurrentpassword(Request $request ,$id){
+    public function checkMyCurrentpassword($id){
         $user=User::find($id);
         if($user){
             //if (Hash::check($request->password, $user->password)) { 
@@ -173,7 +178,7 @@ class UserController extends Controller
     public function userAccountActivation($id){
         $user=User::find($id);
         if($user){
-            $status=1;
+            $status='active';
             $user->status=$status;
             $user->save();
             $response=[

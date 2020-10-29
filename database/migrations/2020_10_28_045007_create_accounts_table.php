@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateUbicationsTable extends Migration
+class CreateAccountsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,12 @@ class CreateUbicationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('ubications', function (Blueprint $table) {
-            $table->id('id');
-            $table->double('latitude');
-            $table->double('longitude');
-            $table->text('address');
-            $table->boolean('IS_GPS');
+        Schema::create('accounts', function (Blueprint $table) {
+            $table->id();
+            $table->string('email')->unique();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
-           
+            
         });
     }
 
@@ -32,6 +29,6 @@ class CreateUbicationsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('ubications');
+        Schema::dropIfExists('accounts');
     }
 }
