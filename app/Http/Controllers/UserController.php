@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Support\Facades\Crypt;
 use  App\User;
+use App\Account;
 use Illuminate\Http\Request;
 use Validator;
 use App\Http\Requests\UserRequest;
@@ -16,22 +17,12 @@ use Mail;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    
     public function index()
     {
-        //
+    
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request){  
         /*validar telefonos que ya existen.
         validar correos que ya existen.*/       
@@ -119,12 +110,6 @@ class UserController extends Controller
      
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id){
         $user=User::find($id);
         if($user){
@@ -144,12 +129,6 @@ class UserController extends Controller
         
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id){
         
     }
@@ -174,7 +153,6 @@ class UserController extends Controller
        
     }
 
-   
     public function userAccountActivation($id){
         $user=User::find($id);
         if($user){
@@ -195,7 +173,37 @@ class UserController extends Controller
             return response()->json($response,404); 
         }
        
-    
+    }
+
+    public function AccountRecoveryEmail(Request $request){
+        $email=$request->email;
+        $user =User::where('email',$email)->first();
+        if($user){
+            $token=$user->createToken('Token')->accessToken;
+            $data=[
+                'id'=>$user->id,
+                'token'=>$token,
+            ];
+            return response()->json($data,202);
+        }
+        else{
+            $account=Account::where('email',$email)->first();
+            if($account){
+                $user=User::find($account->user_id);
+                $token=$user->createToken('Token')->accessToken;
+                $data=[
+                    'id'=>$account->user_id,
+                    'token'=>$token,
+                ];
+                return response()->json($data,200);
+            }
+            else{
+                $message=[
+                    'message'=>'dirección electrónica no exite en nuestro sistema'
+                ];
+                return response()->json($message,404);
+            }
+        }
     }
 
     public function findEmail(Request $request){
@@ -213,4 +221,3 @@ class UserController extends Controller
         }
     }
 }
-//163223

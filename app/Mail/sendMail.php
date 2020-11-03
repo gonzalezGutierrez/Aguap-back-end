@@ -29,10 +29,16 @@ class sendMail extends Mailable
      */
     public function build()
     {
+        if(sizeof($this->data)<3){
+            return "hola perro";
+        }
+        else{
+            return $this->from('aguapppi2020@gmail.com',env('MAIL_FROM_NAME'))
+            ->subject('agua App')
+            ->with($this->data)
+            ->view('email');
+        }
+    
         
-        return $this->from('aguapppi2020@gmail.com',env('MAIL_FROM_NAME'))
-        ->subject('agua App')
-        ->with($this->data)
-        ->view('email');
     }
 }

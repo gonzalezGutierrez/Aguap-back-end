@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Account;
+use App\User;
 class AccountController extends Controller
 {
     /**
@@ -11,8 +12,7 @@ class AccountController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
+    public function index($id){
         
     }
 
@@ -36,9 +36,17 @@ class AccountController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
-    {
-        //
+    public function show($id){
+        $accounts=User::find($id)->accounts;
+        if($accounts){
+            return response()->json($accounts,202);
+        }
+        else{
+            $message=[
+                'message'=>'vacio'
+            ];
+            return response()->json($message,202);
+        }
     }
 
     /**
@@ -60,7 +68,6 @@ class AccountController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function destroy($id){
-        
         $account=Account::find($id);
         if($account){
             $account->delete();
