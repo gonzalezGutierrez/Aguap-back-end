@@ -17,8 +17,7 @@ class sendMail extends Mailable
      * @return void
      */
     public $data;
-    public function __construct($data)
-    {
+    public function __construct($data){
         $this->data=$data;
     }
 
@@ -27,18 +26,20 @@ class sendMail extends Mailable
      *
      * @return $this
      */
-    public function build()
-    {
-        if(sizeof($this->data)<3){
-            return "hola perro";
+    public function build(){
+        
+        if(sizeof($this->data)<4){
+            return $this->from('aguapppi2020@gmail.com',env('MAIL_FROM_NAME'))
+            ->subject('Restablece tu cuenta')
+            ->with($this->data)
+            ->view('resetPassword');  
         }
         else{
             return $this->from('aguapppi2020@gmail.com',env('MAIL_FROM_NAME'))
-            ->subject('agua App')
+            ->subject('Activa tu cuenta')
             ->with($this->data)
-            ->view('email');
+            ->view('confirmationEmail');
         }
     
-        
     }
 }

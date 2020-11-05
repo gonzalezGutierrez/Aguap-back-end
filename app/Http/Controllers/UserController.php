@@ -90,6 +90,7 @@ class UserController extends Controller
             return response()->json($response,404);   
         }
     }
+    
     public function checkMyCurrentpassword($id){
         $user=User::find($id);
         if($user){
@@ -180,10 +181,13 @@ class UserController extends Controller
         $user =User::where('email',$email)->first();
         if($user){
             $token=$user->createToken('Token')->accessToken;
+            $name=$user->name." ".$user->lastName;
             $data=[
-                'id'=>$user->id,
+                'name'=>$name,
                 'token'=>$token,
+                'id'=>$user->id, 
             ];
+            Mail::to($email)->send(new sendMail($data));
             return response()->json($data,202);
         }
         else{
@@ -191,15 +195,18 @@ class UserController extends Controller
             if($account){
                 $user=User::find($account->user_id);
                 $token=$user->createToken('Token')->accessToken;
+                $name=$user->name." ".$user->lastName;
                 $data=[
-                    'id'=>$account->user_id,
+                    'name'=>$name,
                     'token'=>$token,
+                    'id'=>$account->user_id,
                 ];
+                Mail::to($email)->send(new sendMail($data));
                 return response()->json($data,200);
             }
             else{
                 $message=[
-                    'message'=>'dirección electrónica no exite en nuestro sistema'
+                    'message'=>'not found',
                 ];
                 return response()->json($message,404);
             }
