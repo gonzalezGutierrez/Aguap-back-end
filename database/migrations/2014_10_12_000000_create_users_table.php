@@ -19,11 +19,11 @@ class CreateUsersTable extends Migration
             $table->string('lastName');
             $table->string('email',50)->unique();
             $table->string('phone')->unique();
-            $table->integer('idRol');
             $table->string('password');
             $table->string('confirmation_password');
             $table->enum('status', ['active','inactive']);
-            $table->rememberToken();
+            $table->foreignId('role_id')->constrained('roles')->onDelete('cascade');
+            //$table->rememberToken();
             $table->timestamps();
         });
     }
@@ -33,8 +33,8 @@ class CreateUsersTable extends Migration
      *
      * @return void
      */
-    public function down()
-    {
+    public function down(){
+        
         Schema::dropIfExists('users');
     }
 }

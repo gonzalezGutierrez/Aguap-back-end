@@ -15,11 +15,9 @@ use App\Mail\sendMail;
 use Mail;
 
 
-class UserController extends Controller
-{
-    
-    public function index()
-    {
+class UserController extends Controller{
+
+    public function index(){
     
     }
 
@@ -32,18 +30,18 @@ class UserController extends Controller
         $user->lastName=$request->lastName;
         $user->email=$request->email;
         $user->phone=$request->phone;
-        $user->idRol=$request->idRol;
+        $user->role_id=$request->role_id;
         $user->password=Crypt::encryptString($request->password);
         $user->confirmation_password=Crypt::encryptString($request->confirmation_password);
         /*$user->password=hash::make($request->password);
         $user->confirmation_password=hash::make($request->confirmation_password);*/
         $user->status=$request->status;
-        $user->save();
         $response=[
             'message'=>'confirme su cuenta se le a enviado un email a su correo electronico',
         ];
+        $user->save();
         $this->sendConfirmationEmail($user->email);
-        return response()->json($response,200);
+        return response()->json($response,201);
 
     }
     public function updateUser(Request $request,$id){
@@ -53,15 +51,15 @@ class UserController extends Controller
             $user->lastName=$request->lastName;
             $user->email=$request->email;
             $user->phone=$request->phone;
-
+            $user->save();
             $response=[
                 'name'=>$user->name,
                 'lastName'=>$user->lastName,
                 'email'=>$user->email,
                 'phone'=>$user->phone,
-                'idRol'=>$user->idRol,
+                'role_id'=>$user->role_id,
             ];
-            $user->save();
+           
             return response()->json($response,200);
         }
         else{
@@ -106,7 +104,7 @@ class UserController extends Controller
             } */ 
         }
         else{
-            return response()->json("error",404);
+            return response()->json("not found",404);
         }
      
     }
@@ -119,9 +117,9 @@ class UserController extends Controller
                 'lastName'=>$user->lastName,
                 'email'=>$user->email,
                 'phone'=>$user->phone,
-                'idRol'=>$user->idRol,
+                'role_id'=>$user->role_id,
             ];
-            return response()->json($response);
+            return response()->json($response,200);
         }
         else{
             $response=['message'=>"error not found"];
@@ -131,6 +129,17 @@ class UserController extends Controller
     }
 
     public function destroy($id){
+        $user=User::find($id);
+        if($user){
+            $user->delete();
+            return response()->json('ok',200);
+        }
+        else{
+            $message=[
+                'message'=>'not found'
+            ];
+            return response()->json($message,404);
+        }
         
     }
 
@@ -164,7 +173,7 @@ class UserController extends Controller
                 'name'=>$user->name,
                 'lastName'=>$user->lastName,
                 'id'=>$user->id,
-                'idRol'=>$user->idRol,
+                'role_id'=>$user->role_id,
                 'status'=>$user->status,
             ];
             return response()->json($response,200);
@@ -188,7 +197,7 @@ class UserController extends Controller
                 'id'=>$user->id, 
             ];
             Mail::to($email)->send(new sendMail($data));
-            return response()->json($data,202);
+            return response()->json($data,200);
         }
         else{
             $account=Account::where('email',$email)->first();
