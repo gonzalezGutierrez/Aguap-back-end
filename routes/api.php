@@ -29,3 +29,34 @@ Route::middleware(['middleware'=>'auth:api'])->group(function () {
     Route::get('v1/ubication','UbicationController@index');
     Route::delete('v1/ubication/{id}','UbicationController@destroy');
 });
+
+
+Route::group(['prefix'=>'v1'],function(){
+
+
+    Route::group(['prefix'=>'resources'],function(){
+
+
+        Route::get('repartidores',[\App\Http\Controllers\Api\V1\ResourcesApi\UsuariosRepartidoresController::class,'index']);
+
+
+        Route::get('ubicaciones',[\App\Http\Controllers\Api\V1\ResourcesApi\UbicacionesClientesController::class,'index']);
+
+
+        Route::get('servicios',[\App\Http\Controllers\Api\V1\ResourcesApi\ServiciosController::class,'index']);
+
+        Route::post('ordenes',[\App\Http\Controllers\Api\V1\ResourcesApi\OrderController::class,'store']);
+        Route::patch('ordenes/update-repartidor',[\App\Http\Controllers\Api\V1\ResourcesApi\OrderController::class,'updateRepartidor']);
+        Route::patch('ordenes/update-ubicacion',[\App\Http\Controllers\Api\V1\ResourcesApi\OrderController::class,'updateUbicacion']);
+        Route::patch('ordenes/update-fecha',[\App\Http\Controllers\Api\V1\ResourcesApi\OrderController::class,'updateFecha']);
+
+
+
+        Route::get('orden',[\App\Http\Controllers\Api\V1\ResourcesApi\OrderController::class,'show']);
+
+
+
+    });
+
+
+});

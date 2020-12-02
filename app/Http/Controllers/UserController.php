@@ -11,27 +11,16 @@ use App\Http\Requests\UserRequest;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request){  
+    public function store(Request $request){
         // falta validar que las contraseña sean correctas.
         //validar telefonos que ya existen.
-        //validar correos que ya existen.       
-        //validar datos vacios 
+        //validar correos que ya existen.
+        //validar datos vacios
         $request->all();
         $user=new User;
         $user->name=$request->name;
@@ -55,9 +44,9 @@ class UserController extends Controller
             'idRol'=>$user->idRol,
             'status'=>$user->status,
         ];
-        
+
         return response()->json($response,200);
-       
+
     }
 
     /**
@@ -82,7 +71,7 @@ class UserController extends Controller
             $response=['message'=>"error not found"];
             return response()->json($response,404);
         }
-        
+
     }
 
     /**
@@ -128,7 +117,7 @@ class UserController extends Controller
                     'idRol'=>$user->idRol,
                 ];
                 return response()->json($response);
-            }     
+            }
         }
         else{
             $response=['message'=>"user not found",];
