@@ -33,6 +33,7 @@ class Order extends Model
     public function scopeGetAttributes($query) {
         return $query->select(
             'tbl_ordenes.idOrden',
+            'tbl_ordenes.fechaOrden',
             'tbl_ubicaciones.address',
             'tbl_usuarios.name as nombreRepartidor',
             'tbl_usuarios.lastName as apellidoRepartidor'

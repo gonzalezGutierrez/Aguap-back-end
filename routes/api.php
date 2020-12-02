@@ -54,9 +54,8 @@ Route::group(['prefix'=>'v1'],function(){
 
         Route::get('orden',[\App\Http\Controllers\Api\V1\ResourcesApi\OrderController::class,'show']);
 
-
+        Route::post('orden/add-servicio',[\App\Http\Controllers\Api\V1\ResourcesApi\OrderController::class,'addServicio']);
 
     });
-
 
 });

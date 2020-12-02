@@ -21,6 +21,8 @@ class CreateServicioOrdersTable extends Migration
 
             $table->integer('cantidad')->default(1);
 
+            $table->double('subtotal');
+
             $table->timestamps();
         });
     }
