@@ -48,7 +48,8 @@ class User extends Authenticatable{
     }
 
     public function scopeGetUsuariosByRol($query,$rol) {
-        return $query->where('tbl_roles.rol',$rol);
+        return $query->where('tbl_usuarios.idRol',$rol)->orderBy('tbl_usuarios.name','ASC')
+            ->orderBy('tbl_usuarios.lastName','ASC');
     }
 
     public function scopeGetAttributes($query) {
@@ -64,8 +65,8 @@ class User extends Authenticatable{
     public function accounts(){
         return $this->hasMany('App\Account');
     }
-    
-   
+
+
 
 }
 
