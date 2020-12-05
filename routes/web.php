@@ -16,3 +16,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+
+Route::group(['prefix'=>'administracion'],function(){
+    Route::get('pedidos',[\App\Http\Controllers\PedidosController::class,'index']);
+});

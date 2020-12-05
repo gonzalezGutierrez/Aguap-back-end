@@ -1,0 +1,32 @@
+.box-gray {
+    padding: 20px;
+    background-color: #f5f5f5;
+}
+
+.creada {
+    background-color: #1c2a48;
+}
+
+.enviada {
+    background-color: #e64a19;
+}
+
+.entregada{
+    background-color: #00695c;
+}
+
+.space__header {
+    height: 120px;
+}
+
+.space__general_35 {
+    height: 35px;
+}
+
+.btn {
+    margin: 0px !important;
+}
+.btn-primary {
+    background-color: #1c2a48 !important;
+    border:#1c2a48 !important;
+}
