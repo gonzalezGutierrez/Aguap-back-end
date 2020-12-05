@@ -23,18 +23,15 @@ class CreateUsersTable extends Migration
             $table->foreign('idRol')->references('idRol')->on('tbl_roles');
             $table->string('password');
             $table->tinyInteger('eliminado')->default(0);
+            $table->enum('status',['active','inactive'])->default('inactive');
             $table->rememberToken();
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
+    public function down(){
         Schema::dropIfExists('tbl_usuarios');
-    }
+    }   
+
+
 }

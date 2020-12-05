@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Ubication extends Model{
 
-
     protected $table = 'tbl_ubicaciones';
     protected $primaryKey = 'idUbicacion';
 
@@ -30,4 +29,5 @@ class Ubication extends Model{
         );
     }
 
+   
 }
