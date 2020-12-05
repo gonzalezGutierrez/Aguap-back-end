@@ -11,9 +11,8 @@ class CreateUbicationsTable extends Migration
      *
      * @return void
      */
-    public function up()
-    {
-
+    public function up(){
+        
         Schema::create('tbl_ubicaciones', function (Blueprint $table) {
             $table->increments('idUbicacion');
             $table->integer('idUsuario')->unsigned();
@@ -23,8 +22,7 @@ class CreateUbicationsTable extends Migration
             $table->text('address');
             $table->boolean('IS_GPS')->default(false);
             $table->tinyInteger('eliminado')->default(0);
-            $table->timestamps();
-           
+            $table->timestamps(); 
         });
     }
 
