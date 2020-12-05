@@ -13,6 +13,7 @@ class CreateUbicationsTable extends Migration
      */
     public function up()
     {
+
         Schema::create('tbl_ubicaciones', function (Blueprint $table) {
             $table->increments('idUbicacion');
             $table->integer('idUsuario')->unsigned();
@@ -23,14 +24,10 @@ class CreateUbicationsTable extends Migration
             $table->boolean('IS_GPS')->default(false);
             $table->tinyInteger('eliminado')->default(0);
             $table->timestamps();
+           
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
         Schema::dropIfExists('ubications');

@@ -5,22 +5,22 @@ namespace App;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
+use Illuminate\Database\Eloquent\Model;
 
-class User extends Authenticatable
-{
+class User extends Authenticatable{
     //use Notifiable;
     use HasApiTokens, Notifiable;
 
-    protected $table = 'tbl_usuarios';
-    protected $primaryKey = 'idUsuario';
+    protected $table ='tbl_usuarios';
+    protected $primaryKey ='idUsuario';
 
     protected $fillable = [
         'name','lastName','email','phone','idRol',
-        'password','confirmation_password','status',
+        'password','status',
     ];
 
     protected $hidden = [
-        'password','confirmation_password','remember_token',
+        'password','remember_token',
     ];
 
     public function scopeGetUsuarios($query,$like,$estatus) {
@@ -61,6 +61,11 @@ class User extends Authenticatable
         );
     }
 
-
+    public function accounts(){
+        return $this->hasMany('App\Account');
+    }
+    
+   
 
 }
+
