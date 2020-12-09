@@ -14,10 +14,13 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('email');
+    return view('welcome');
 });
 
 
 Route::group(['prefix'=>'administracion'],function(){
     Route::get('pedidos',[\App\Http\Controllers\PedidosController::class,'index']);
 });
+
+Route::get('login',[\App\Http\Controllers\AuthController::class,'login']);
+Route::post('login',[\App\Http\Controllers\AuthController::class,'auth']);

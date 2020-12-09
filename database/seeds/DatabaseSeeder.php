@@ -14,7 +14,7 @@ class DatabaseSeeder extends Seeder
         DB::table('tbl_roles')->insert([
             'rol'=>"administrador",
         ]);
-        
+
         DB::table('tbl_roles')->insert([
             'rol'=>"repartidor",
         ]);
@@ -65,5 +65,13 @@ class DatabaseSeeder extends Seeder
             $servicioOrden->subtotal   = $servicioOrden->cantidad * rand(0,100);
             $servicioOrden->save();
         }
+
+        $user = new  \App\User();
+        $user->name = 'Jesus';
+        $user->lastName = 'Gonzalez';
+        $user->email    = 'jesusgonzalez_25@outlook.com';
+        $user->password = bcrypt('12345678');
+        $user->idRol    = 1;
+        $user->save();
     }
 }

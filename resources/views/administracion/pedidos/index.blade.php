@@ -136,7 +136,7 @@
                         <th class="text-uppercase text-center">repartidor</th>
                         <th class="text-uppercase text-center">fecha entrega</th>
                         <th class="text-uppercase text-center">estatus</th>
-
+                        <th class="text-uppercas text-center">acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -148,6 +148,11 @@
                             <td class="text-center text-uppercase">{{$pedido->fechaEntrega}}</td>
                             <td class="text-center text-uppercase">
                                 <span class="badge p-1 {{$pedido->estatus}}">{{$pedido->estatus}}</span>
+                            </td>
+                            <td>
+                                <a href="" class="btn btn-sm btn-primary">
+                                    <i class="fa fa-list"></i>
+                                </a>
                             </td>
                         </tr>
                     @endforeach
