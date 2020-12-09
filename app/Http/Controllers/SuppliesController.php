@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Supplies;
+use App\Suppliers;
 use Illuminate\Http\Request;
 
 class SuppliesController extends Controller
@@ -14,8 +15,25 @@ class SuppliesController extends Controller
      */
     public function index()
     {
-        $supplies = Supplies::all();
-        return response()->json($supplies);
+        /*SELECT supplies.consumibles, supplies.id_proveedores, suppliers.nombre, supplies.cantidad FROM 
+        `supplies` INNER JOIN `suppliers` on supplies.id_proveedores = suppliers.id 
+        GROUP BY id_proveedores */
+        $proveedores_elegibles = Suppliers::pluck('nombre','id');
+
+        /*$supplies = Supplies::all();*/
+
+        $_supplies_ = Supplies::select("supplies.id",
+                                        "supplies.consumibles",
+                                        "supplies.id_proveedores",
+                                        "suppliers.nombre as provee_name",
+                                        "supplies.cantidad")
+                                        ->join("suppliers", "supplies.id_proveedores", "=", "suppliers.id")
+                                        ->get();
+
+        return view('administracion.insumos.supplie', compact(
+            'proveedores_elegibles',
+            '_supplies_',
+        ));
     }
 
     /**
@@ -36,14 +54,18 @@ class SuppliesController extends Controller
      */
     public function store(Request $request)
     {
+        
         $request->all();
+        /*echo '<script>';
+        echo 'console.log('. json_encode( $request->idProveedor ) .')';
+        echo '</script>';*/
         $supplies = new Supplies;
         $supplies->consumibles=$request->consumibles;
-        $supplies->id_proveedores=$request->id_proveedores;
+        $supplies->id_proveedores=$request->idProveedor;
         $supplies->cantidad=$request->cantidad;
         $supplies->save();
 
-        return response()->json($supplies);
+        return redirect('administracion/insumos')->with('success', 'Insumo Agregado!');
     }
 
     /**
@@ -113,17 +135,30 @@ class SuppliesController extends Controller
      * @param  \App\Supplies  $supplies
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        $supplies = Supplies::find($id);
+        $supplies = Supplies::find($request->id);
         if($supplies){
             $supplies->delete();
-            return response()->json($supplies);
+            return redirect('administracion/insumos')->with('success', 'Proveedor borrado!');
+        }
+    }
+
+    public function actualizar(Request $request){
+        
+        $request->all();
+        $supplies = Supplies::find($request->insumos_id);
+        /*echo '<script>';
+        echo 'console.log('. json_encode( $request->id ) .')';
+        echo '</script>';*/
+        if($supplies){
+            $supplies->consumibles = $request->edit_consumibles;
+            $supplies->id_proveedores = $request->id;
+            $supplies->cantidad = $request->edit_cantidad;
+            $supplies->save();
+            return redirect('administracion/insumos')->with('success', 'Proveedor Actualizado!');
         }else{
-            $response=[
-                'message'=>"not found supplies",
-            ];
-            return response()->json($response,404);
+            return redirect('administracion/insumos')->with('failed', 'Proveedor no Actualizado!');
         }
     }
 }

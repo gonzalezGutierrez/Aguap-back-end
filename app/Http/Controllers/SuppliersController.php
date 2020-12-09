@@ -15,7 +15,10 @@ class SuppliersController extends Controller
     public function index()
     {
         $suppliers = Suppliers::all();
-        return response()->json($suppliers);
+        //return response()->json($suppliers);
+        return view('administracion.proveedores.supplier', compact(
+            'suppliers',
+        ));
     }
 
     /**
@@ -44,7 +47,8 @@ class SuppliersController extends Controller
         $suppliers->direccion=$request->direccion;
         $suppliers->save();
 
-        return response()->json($suppliers);
+        /*return response()->json($suppliers);*/
+        return redirect('administracion/proveedores')->with('success', 'Proveedor Agregado!');
     }
 
     /**
@@ -76,9 +80,8 @@ class SuppliersController extends Controller
      * @param  \App\Suppliers  $suppliers
      * @return \Illuminate\Http\Response
      */
-    public function edit(Suppliers $suppliers)
+    public function edit($id)
     {
-        //
     }
 
     /**
@@ -88,27 +91,9 @@ class SuppliersController extends Controller
      * @param  \App\Suppliers  $suppliers
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+     function update(Request $request)
     {
-        $request->all();
-        $suppliers = Suppliers::find($id);
-        if($suppliers){
-            $suppliers->nombre = $request->nombre;
-            $suppliers->correo = $request->correo;
-            $suppliers->telefono = $request->telefono;
-            $suppliers->direccion = $request->direccion;
-            $suppliers->save();
-            $response=[
-                'nombre' => $suppliers->nombre,
-                'correo' => $suppliers->correo,
-                'telefono' => $suppliers->telefono,
-                'direccion' => $suppliers->direccion,
-            ];
-            return response()->json($response);
-        }else{
-            $response=['message'=>"user not found",];
-            return response()->json($response,404);
-        }
+
     }
 
     /**
@@ -117,17 +102,31 @@ class SuppliersController extends Controller
      * @param  \App\Suppliers  $suppliers
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        $suppliers = Suppliers::find($id);
+        $suppliers = Suppliers::find($request->id);
         if($suppliers){
             $suppliers->delete();
-            return response()->json($suppliers);
+            return redirect('administracion/proveedores')->with('success', 'Proveedor borrado!');
+        }
+    }
+
+    public function actualizar(Request $request){
+        
+        $request->all();
+        $suppliers = Suppliers::find($request->proveedor_id);
+        /*echo '<script>';
+        echo 'console.log('. json_encode( $request->edit_nombre ) .')';
+        echo '</script>';*/
+        if($suppliers){
+            $suppliers->nombre = $request->edit_nombre;
+            $suppliers->correo = $request->edit_correo;
+            $suppliers->telefono = $request->edit_telefono;
+            $suppliers->direccion = $request->edit_direccion;
+            $suppliers->save();
+            return redirect('administracion/proveedores')->with('success', 'Proveedor Actualizado!');
         }else{
-            $response=[
-                'message'=>"not found suppliers",
-            ];
-            return response()->json($response,404);
+            return redirect('administracion/proveedores')->with('failed', 'Proveedor no Actualizado!');
         }
     }
 }
