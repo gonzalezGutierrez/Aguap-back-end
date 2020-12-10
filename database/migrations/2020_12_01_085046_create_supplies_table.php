@@ -16,7 +16,8 @@ class CreateSuppliesTable extends Migration
         Schema::create('supplies', function (Blueprint $table) {
             $table->id();
             $table->text('consumibles');
-            $table->integer('id_proveedores');
+            $table->integer('idSupplier')->unsigned()->nullable();
+            $table->foreign('idSupplier')->references('idSupplier')->on('suppliers');
             $table->integer('cantidad');
             $table->timestamps();
         });

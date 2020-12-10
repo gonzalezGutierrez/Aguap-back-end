@@ -179,7 +179,7 @@
             console.log(data);
             modal.find('.modal-body #insumos_id').val(data.id);
             modal.find('.modal-body #edit_consumibles').val(data.consumibles);
-            modal.find('.modal-body #seleccionados_').val(data.id_proveedores);
+            modal.find('.modal-body #seleccionados_').val(data.idSupplier);
             modal.find('.modal-body #edit_cantidad').val(data.cantidad);
         })
     $(document).on('click','.delete',function(){

@@ -18,16 +18,16 @@ class SuppliesController extends Controller
         /*SELECT supplies.consumibles, supplies.id_proveedores, suppliers.nombre, supplies.cantidad FROM 
         `supplies` INNER JOIN `suppliers` on supplies.id_proveedores = suppliers.id 
         GROUP BY id_proveedores */
-        $proveedores_elegibles = Suppliers::pluck('nombre','id');
+        $proveedores_elegibles = Suppliers::pluck('nombre','idSupplier');
 
         /*$supplies = Supplies::all();*/
 
         $_supplies_ = Supplies::select("supplies.id",
                                         "supplies.consumibles",
-                                        "supplies.id_proveedores",
+                                        "supplies.idSupplier",
                                         "suppliers.nombre as provee_name",
                                         "supplies.cantidad")
-                                        ->join("suppliers", "supplies.id_proveedores", "=", "suppliers.id")
+                                        ->join("suppliers", "supplies.idSupplier", "=", "suppliers.idSupplier")
                                         ->get();
 
         return view('administracion.insumos.supplie', compact(
@@ -61,7 +61,7 @@ class SuppliesController extends Controller
         echo '</script>';*/
         $supplies = new Supplies;
         $supplies->consumibles=$request->consumibles;
-        $supplies->id_proveedores=$request->idProveedor;
+        $supplies->idSupplier=$request->idProveedor;
         $supplies->cantidad=$request->cantidad;
         $supplies->save();
 
@@ -80,7 +80,7 @@ class SuppliesController extends Controller
         if($supplies){
             $response = [
                 'consumibles' => $supplies->consumibles,
-                'id_proveedores' => $supplies->id_proveedores,
+                'idSupplier' => $supplies->idSupplier,
                 'cantidad' => $supplies->cantidad,
             ];
             return response()->json($response);
@@ -114,12 +114,12 @@ class SuppliesController extends Controller
         $supplies = Supplies::find($id);
         if($supplies){
             $supplies->consumibles = $request->consumibles;
-            $supplies->id_proveedores = $request->id_proveedores;
+            $supplies->idSupplier = $request->id_proveedores;
             $supplies->cantidad = $request->cantidad;
             $supplies->save();
             $response=[
                 'consumibles' => $supplies->consumibles,
-                'id_proveedores' => $supplies->id_proveedores,
+                'idSupplier' => $supplies->id_proveedores,
                 'cantidad' => $supplies->cantidad,
             ];
             return response()->json($response);
@@ -153,7 +153,7 @@ class SuppliesController extends Controller
         echo '</script>';*/
         if($supplies){
             $supplies->consumibles = $request->edit_consumibles;
-            $supplies->id_proveedores = $request->id;
+            $supplies->idSupplier = $request->id;
             $supplies->cantidad = $request->edit_cantidad;
             $supplies->save();
             return redirect('administracion/insumos')->with('success', 'Proveedor Actualizado!');
