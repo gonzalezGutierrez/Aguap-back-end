@@ -64,14 +64,6 @@ class User extends Authenticatable{
     public function accounts(){
         return $this->hasMany('App\Account','idUsuario');
     }
-<<<<<<< HEAD
     
-    
-   
-=======
-
-
->>>>>>> b49300b414698552c4a675e22ff392cb9dc109b3
-
 }
 
