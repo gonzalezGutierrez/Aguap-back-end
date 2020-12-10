@@ -18,8 +18,11 @@
                     <li class="nav-item {{request()->is('administracion/pedidos*') ?  'active' : ''}}">
                         <a class="nav-link" href="{{asset('administracion/pedidos')}}">Pedidos</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Insumos</a>
+                    <li class="nav-item {{request()->is('administracion/proveedores*') ?  'active' : ''}}" >
+                        <a class="nav-link" href="{{asset('administracion/proveedores')}}">Proveedores</a>
+                    </li>
+                    <li class="nav-item {{request()->is('administracion/insumos*') ?  'active' : ''}}" >
+                        <a class="nav-link" href="{{asset('administracion/insumos')}}">Insumos</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">
