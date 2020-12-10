@@ -23,7 +23,7 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">
-                            Jesús Gonzalez
+                            {{Auth::user()->name.' '.Auth::user()->lastName}}
                             <i class="fas fa-chevron-down"></i>
                         </a>
                     </li>

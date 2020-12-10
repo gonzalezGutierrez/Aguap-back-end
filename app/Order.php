@@ -24,6 +24,7 @@ class Order extends Model
         return $query->tblCustomer()
             ->tblSeller()
             ->getAttrs()
+            ->getOrdersLike($request)
             ->orderBy('tbl_ordenes.idOrden','DESC');
     }
 
@@ -48,6 +49,39 @@ class Order extends Model
             'tbl_ordenes.estatus'
         );
     }
+    public function scopeGetOrdersLike($query,$request) {
+        return $query->getByCustomer($request->customer)
+            ->getBySeller($request->idSeller)
+            ->getBetweenDates($request->startDate,$request->endDate)
+            ->getByStatus($request->status);
+    }
+
+    public function scopeGetByCustomer($query,$idCustomer) {
+        return $query->when(!empty($idCustomer),function($query) use($idCustomer){
+            return $query->where('customers.name',"LIKE","%{$idCustomer}%")
+                ->orWhere('customers.lastName',"LIKE","%{$idCustomer}%");
+        });
+    }
+
+    public function scopeGetBySeller($query,$idSeller) {
+        return $query->when(!empty($idSeller), function ($query) use ($idSeller) {
+            return $query->where('sellers.idUsuario',$idSeller);
+        });
+    }
+
+    public function scopeGetBetweenDates($query,$startDate,$endDate) {
+        return $query->when(!empty($startDate) && !empty($endDate), function ($query) use($startDate,$endDate){
+            return $query->whereBetween('tbl_ordenes.fechaOrden',[$startDate,$endDate]);
+        });
+    }
+
+    public function scopeGetByStatus($query,$status) {
+        return $query->when(!empty($status) && $status != 0 , function($query) use($status){
+             return $query->where('tbl_ordenes.estatus',$status);
+        });
+    }
+
+
 
     public function scopeGetOrderByIdCliente($query,$idUsuario) {
         return $query->where('idCliente',$idUsuario)
