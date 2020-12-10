@@ -30,7 +30,6 @@ class User extends Authenticatable{
             ->orderBy('tbl_usuarios.created_at','desc')
             ->where('tbl_usuarios.eliminado',$estatus)
             ->getAttributes();
-
     }
 
     public function scopeGetUsuario($query,$idUsuario) {
@@ -62,8 +61,9 @@ class User extends Authenticatable{
     }
 
     public function accounts(){
-        return $this->hasMany('App\Account');
+        return $this->hasMany('App\Account','idUsuario');
     }
+    
     
    
 

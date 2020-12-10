@@ -33,4 +33,9 @@ class UbicacionesClientesController extends Controller
         ]);
     }
 
+    public function destroy(Request $request){
+        $ubication=Ubication::find($request->idUbicacion);
+        $status=1;
+        return response()->json($ubication,200);
+    }
 }

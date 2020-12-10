@@ -6,17 +6,92 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Auth;
 use  App\User;
 use App\Account;
 use Illuminate\Http\Request;
 use Validator;
 use App\Http\Requests\UserRequest;
-use App\Mail\sendMail;
+use App\Mail\confirmarCuenta;
+use App\Mail\CambiarContrasenia;
 use Mail;
+use Carbon\Carbon;
 
 class UserController extends Controller{
-    public function index(){     
+
+
+    public function login(Request $request){
+
+        //login por telefono Movil si el usuario esta activo 
+        if( is_numeric($request->get('email')) ){
+            $user=User::where('phone',$request['email'])->first();
+            if (strcmp($user->status,"inactive")==0) { 
+                return response()->json([
+                    'status' => 'inactive',
+                ],401);
+            }
+            else{
+                $phone=$request->get('email');
+                if(Hash::check($request->password,$user->password)&&(strcmp($user->phone,$phone)==0)){
+                    $token=$this->token($user);
+                    $client=$this->client($user,$token);
+                    return response()->json($client,200);
+                }
+                else{
+                    return response()->json([
+                        'status' => 'Unauthorized'
+                    ],401);
+                }
+            }
+        }
+
+        //login por email si el usuario esta activo
+        else{
+            $credentials = request(['email', 'password']);
+            if(!Auth::attempt($credentials)){
+                return response()->json([
+                    'status' => 'Unauthorized'
+                ],401);
+            }
+            else{
+                $user=$request->user(); 
+                $status=$user->status;
+                if (strcmp($status,"inactive")==0) { 
+                    return response()->json([
+                        'status' => 'inactive',
+                    ],401);
+                }
+                else{
+                    $token=$this->token($user);
+                    $client=$this->client($user,$token);
+                    return response()->json($client,200);
+                } 
+            }
+        }
     }
+
+    public function token($user){
+        $tokenResult=$user->createToken('token');
+        $token=$tokenResult->token;
+        $token->expires_at = Carbon::now()->addWeeks(1);
+        $token->save();
+        $token=[
+            'token' => $tokenResult->accessToken,
+            'token_type' => 'Bearer',
+            'expires_at' => Carbon::parse($tokenResult->token->expires_at)->toDateTimeString()
+        ];
+        return $token;
+    }
+    public function client($user,$token){
+        $client=[
+            'id'=>$user->idUsuario,
+            'name'=>$user->name,
+            'lastName'=>$user->lastName,
+            'token'=>$token['token'],
+        ];
+        return $client;
+    }
+   
     public function store(Request $request){  
         $request->all();
         $user=new User;
@@ -24,137 +99,37 @@ class UserController extends Controller{
         $user->lastName=$request->lastName;
         $user->email=$request->email;
         $user->phone=$request->phone;
-        $user->role_id=$request->role_id;
-        $user->password=Crypt::encryptString($request->password);
-        $user->confirmation_password=Crypt::encryptString($request->confirmation_password);
-        /*$user->password=hash::make($request->password);
-        $user->confirmation_password=hash::make($request->confirmation_password);*/
-        $user->status=$request->status;
-        $response=[
-            'message'=>'confirme su cuenta se le a enviado un email a su correo electronico',
-        ];
-        //return response()->json($response,200);
+        $user->idRol=$request->idRol;
+        $user->password=Hash::make($request->password);
         $user->save();
-        $this->sendConfirmationEmail($user->email);
-        return response()->json($response,201);
-
-    }
-    public function updateUser(Request $request,$id){
-        $user=User::find($id);
-        if($user){
-            $user->name=$request->name;
-            $user->lastName=$request->lastName;
-            $user->email=$request->email;
-            $user->phone=$request->phone;
-            $user->save();
-            $response=[
-                'name'=>$user->name,
-                'lastName'=>$user->lastName,
-                'email'=>$user->email,
-                'phone'=>$user->phone,
-                'role_id'=>$user->role_id,
-            ];
-           
-            return response()->json($response,200);
-        }
-        else{
-            $response=['message'=>"user not found"];
-            return response()->json($response,404);
-        }
-        
-    }
-    public function updatePassword(Request $request,$id){
-        $user=User::find($id);
-        if($user){
-            $user->update([
-                'password' => $user->password=Crypt::encryptString($request->newPassword),
-                'confirmation_password'=>$user->confirmation_password=Crypt::encryptString($request->newPassword),
-            ]);
-            //$user->password=Crypt::encryptString($request->newPassword);
-            //$user->confirmation_password=Crypt::encryptString($request->newPassword);
-            $message=[
-                'mesage'=>'ok',
-            ];
-            $user->save();
-            return response()->json($message,200);
-        }
-        else{
-            $response=['message'=>"not found"];
-            return response()->json($response,404);   
-        }
-    }
-    
-    public function checkMyCurrentpassword($id){
-        $user=User::find($id);
-        if($user){
-            //if (Hash::check($request->password, $user->password)) { 
-                $decrypted = Crypt::decryptString($user->password);
-                $response=[
-                    'password'=>$decrypted
-                ];
-                return response()->json($response,202);
-            //}
-            /*else{
-                return response()->json('false',202);
-            } */ 
-        }
-        else{
-            return response()->json("not found",404);
-        }
+        $token=$user->createToken('token')->accessToken;
+        return response()->json($token,200);
     }
 
-    public function show($id){
-        $user=User::find($id);
+    public function sendConfirmationEmail(Request $request){
+        $user=User::where('email',$request['email'])->first();
         if($user){
-            $response=[
-                'name'=>$user->name,
-                'lastName'=>$user->lastName,
-                'email'=>$user->email,
-                'phone'=>$user->phone,
-                'role_id'=>$user->role_id,
-            ];
-            return response()->json($response,200);
+            $token=$this->token($user);
+            $client=$this->client($user,$token);
+            $email=$request['email'];
+            Mail::to($email)->send(new confirmarCuenta($client));
+            return response()->json($client,200);
         }
         else{
             $response=['message'=>"error not found"];
             return response()->json($response,404);
         }
-
     }
 
-    public function sendConfirmationEmail($email){
-        $user=User::where('email',$email)->first();
-        if($user){
-            $token=$user->createToken('Token')->accessToken;
-            $data=[
-                'name'=>$user->name,
-                'lastName'=>$user->lastName,
-                'id'=>$user->id,
-                'token'=>$token, 
-            ];
-            Mail::to($email)->send(new sendMail($data));
-            return response()->json($data,200);
-        }
-        else{
-            $response=['message'=>"error not found"];
-            return response()->json($response,404);
-        }   
-    }
-
-    public function userAccountActivation($id){
-        $user=User::find($id);
+    public function userAccountActivation(Request $request){
+        $user=Auth::user();
         if($user){
             $status='active';
             $user->status=$status;
             $user->save();
-            $response=[
-                'name'=>$user->name,
-                'lastName'=>$user->lastName,
-                'id'=>$user->id,
-                'role_id'=>$user->role_id,
-                'status'=>$user->status,
-            ];
-            return response()->json($response,200);
+            $token=$this->token($user);
+            $client=$this->client($user,$token);
+            return response()->json($client,200);
         }
         else{
             $response="not found";
@@ -162,34 +137,24 @@ class UserController extends Controller{
         }
        
     }
-
+    
     public function AccountRecoveryEmail(Request $request){
         $email=$request->email;
         $user =User::where('email',$email)->first();
         if($user){
-            $token=$user->createToken('Token')->accessToken;
-            $name=$user->name." ".$user->lastName;
-            $data=[
-                'name'=>$name,
-                'token'=>$token,
-                'id'=>$user->id, 
-            ];
-            Mail::to($email)->send(new sendMail($data));
-            return response()->json($data,200);
+            $token=$this->token($user);
+            $client=$this->client($user,$token);
+            Mail::to($email)->send(new cambiarContrasenia($client));
+            return response()->json($client,200);
         }
         else{
             $account=Account::where('email',$email)->first();
             if($account){
-                $user=User::find($account->user_id);
-                $token=$user->createToken('Token')->accessToken;
-                $name=$user->name." ".$user->lastName;
-                $data=[
-                    'name'=>$name,
-                    'token'=>$token,
-                    'id'=>$account->user_id,
-                ];
-                Mail::to($email)->send(new sendMail($data));
-                return response()->json($data,200);
+                $user=User::find($account->idUsuario);
+                $token=$this->token($user);
+                $client=$this->client($user,$token);
+                Mail::to($email)->send(new cambiarContrasenia($client));
+                return response()->json($client,200);
             }
             else{
                 $message=[
@@ -200,18 +165,86 @@ class UserController extends Controller{
         }
     }
 
+    public function show(Request $request){
+        $user=Auth::user();
+        $response=[
+            'name'=>$user->name,
+            'lastName'=>$user->lastName,
+            'email'=>$user->email,
+            'phone'=>$user->phone,
+        ];
+        return response()->json($response,200);
+    }
+
+    public function checkMyCurrentpassword(Request $request){
+        $user=Auth::user();
+        if (Hash::check($request->password,$user->password)) { 
+            return response()->json('true',202);
+        }
+        else{
+            return response()->json('false',202);
+        }  
+    }
+
+    public function updateUser(Request $request){
+        $user=Auth::user();
+        $user->name=$request->name;
+        $user->lastName=$request->lastName;
+        $user->email=$request->email;
+        $user->phone=$request->phone;
+        $user->save();
+        $response=[
+            'name'=>$user->name,
+            'lastName'=>$user->lastName,
+            'email'=>$user->email,
+            'phone'=>$user->phone,
+        ];
+        return response()->json($response,200);
+    }
+
+    public function updatePassword(Request $request){
+        $user=Auth::user();
+        $user->update([
+            'password' =>$user->password=Hash::make($request->password),
+        ]);
+        $message=[
+            'mesage'=>'ok',
+        ];
+        $user->save();
+        return response()->json($message,200);  
+    }
+
+    public function deleteUser(Request $request){
+        $user=Auth::user();
+        $user->delete();
+        $message=[
+            'message'=>'ok',
+        ];
+        return response()->json($message,200);
+    }
+
     public function findEmail(Request $request){
         $request->all();
         $user = User::where('email', $request['email'])->first();
         if($user){
-            $response=[
-                'email'=>$user->email,
-            ];
-            return response()->json($response);
+            $token=$this->token($user);
+            $client=$this->client($user,$token);
+            return response()->json($client,200);
         }
         else{
-            $response=['message'=>"error not found"];
-            return response()->json($response,404);
+            $account=Account::where('email',$request['email'])->first();
+            if($account){
+                $user=User::find($account->idUsuario);
+                $token=$this->token($user);
+                $client=$this->client($user,$token);
+                return response()->json($client,200);
+            }
+            else{
+                $response=['message'=>"error not found"];
+                return response()->json($response,404);
+            }
+            
         }
     }
+    
 }

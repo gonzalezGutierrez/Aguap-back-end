@@ -17,9 +17,8 @@ class CreateAccountsTable extends Migration
             $table->id();
             $table->string('email')->unique();
             $table->integer('idUsuario')->unsigned();
-            //$table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreign('idUsuario')->references('idUsuario')->on('tbl_usuarios');
             $table->timestamps();
-            
         });
     }
 
