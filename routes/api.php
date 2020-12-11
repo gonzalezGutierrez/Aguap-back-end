@@ -51,6 +51,7 @@ Route::middleware(['middleware'=>'auth:api'])->group(function () {
     Route::put('v1/supplie/{id}','SuppliesController@update');
     Route::put('v1/supplier/{id}','SuppliersController@update');
     
+    Route::post('v1/new/ubicaciones',[\App\Http\Controllers\UbicationController::class,'store']);
 });
 
 
@@ -62,7 +63,7 @@ Route::group(['prefix'=>'v1'],function(){
 
         Route::get('repartidores',[\App\Http\Controllers\Api\V1\ResourcesApi\UsuariosRepartidoresController::class,'index']);
 
-        Route::post('/new/ubicaciones',[\App\Http\Controllers\Api\V1\ResourcesApi\UbicacionesClientesController::class,'store']);
+        
         Route::get('ubicaciones',[\App\Http\Controllers\Api\V1\ResourcesApi\UbicacionesClientesController::class,'index']);
         Route::delete('ubicaciones',[\App\Http\Controllers\Api\V1\ResourcesApi\UbicacionesClientesController::class,'destroy']);
 

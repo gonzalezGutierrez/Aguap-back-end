@@ -20,11 +20,11 @@ class UbicationController extends Controller{
     public function store(Request $request){
         $request->all();
         $ubication=new Ubication;
+        $ubication->idUsuario=$request->user_id;
         $ubication->latitude=$request->latitude;
         $ubication->longitude=$request->longitude;
         $ubication->address=$request->address;
         $ubication->IS_GPS=$request->IS_GPS;
-        $ubication->user_id=$request->user_id;
         $ubication->save();
         return response()->json($ubication,202);
     }
