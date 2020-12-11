@@ -35,7 +35,9 @@ class UbicacionesClientesController extends Controller
 
     public function destroy(Request $request){
         $ubication=Ubication::find($request->idUbicacion);
-        $status=1;
+        $eliminado=1;
+        $ubication->eliminado=$eliminado;
+        $ubication->save();
         return response()->json($ubication,200);
     }
 }
