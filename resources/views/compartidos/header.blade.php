@@ -24,6 +24,9 @@
                     <li class="nav-item {{request()->is('administracion/insumos*') ?  'active' : ''}}" >
                         <a class="nav-link" href="{{asset('administracion/insumos')}}">Insumos</a>
                     </li>
+                    <li class="nav-item {{request()->is('administracion/repartidores*') ?  'active' : ''}}" >
+                        <a class="nav-link" href="{{asset('administracion/repartidores')}}">Repartidores</a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">
                             {{Auth::user()->name.' '.Auth::user()->lastName}}

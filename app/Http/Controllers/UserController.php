@@ -87,6 +87,7 @@ class UserController extends Controller{
             'id'=>$user->idUsuario,
             'name'=>$user->name,
             'lastName'=>$user->lastName,
+            'idRol'=>$user->idRol,
             'token'=>$token['token'],
         ];
         return $client;
