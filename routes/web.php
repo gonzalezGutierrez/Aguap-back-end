@@ -34,5 +34,5 @@ Route::group(['prefix'=>'administracion'],function(){
 Route::get('login',[\App\Http\Controllers\AuthController::class,'login']);
 Route::get('register',[\App\Http\Controllers\AuthController::class,'regis']);
 Route::post('login',[\App\Http\Controllers\AuthController::class,'auth']);
-Route::post('register',[\App\Http\Controllers\AuthController::class,'registro_repartidor']);
+Route::post('register',[\App\Http\Controllers\AuthController::class,'registro_administrativo']);
 

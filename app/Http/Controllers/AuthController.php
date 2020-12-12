@@ -19,7 +19,7 @@ class AuthController extends Controller
         return view('administracion.auth.register');
     }
 
-    public function registro_repartidor(Request $request){
+    public function registro_administrativo(Request $request){
         $request->all();
         $user=new User;
         $user->name=$request->name;
