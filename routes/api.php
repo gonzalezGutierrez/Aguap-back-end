@@ -70,12 +70,14 @@ Route::group(['prefix'=>'v1'],function(){
         Route::get('servicios',[\App\Http\Controllers\Api\V1\ResourcesApi\ServiciosController::class,'index']);
 
         Route::post('ordenes',[\App\Http\Controllers\Api\V1\ResourcesApi\OrderController::class,'store']);
+        Route::post('ordenes/pedidos',[\App\Http\Controllers\Api\V1\ResourcesApi\OrderController::class,'crear_pedidos']);
         Route::patch('ordenes/update-repartidor',[\App\Http\Controllers\Api\V1\ResourcesApi\OrderController::class,'updateRepartidor']);
         Route::patch('ordenes/update-ubicacion',[\App\Http\Controllers\Api\V1\ResourcesApi\OrderController::class,'updateUbicacion']);
         Route::patch('ordenes/update-fecha',[\App\Http\Controllers\Api\V1\ResourcesApi\OrderController::class,'updateFecha']);
 
-
-
+        Route::patch('ordenes/despachado',[\App\Http\Controllers\Api\V1\ResourcesApi\OrderController::class,'Despachado']);
+        Route::get('ordenes/historial',[\App\Http\Controllers\Api\V1\ResourcesApi\OrderController::class,'historialRepartidor']);
+        Route::get('ordenes/activas',[\App\Http\Controllers\Api\V1\ResourcesApi\OrderController::class,'OrdenesActivas']);
         Route::get('orden',[\App\Http\Controllers\Api\V1\ResourcesApi\OrderController::class,'show']);
 
         Route::post('orden/add-servicio',[\App\Http\Controllers\Api\V1\ResourcesApi\OrderController::class,'addServicio']);

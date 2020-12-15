@@ -15,7 +15,8 @@ class SuppliesController extends Controller
      */
     public function index()
     {
-        /*SELECT supplies.consumibles, supplies.id_proveedores, suppliers.nombre, supplies.cantidad FROM 
+        /*SELECT supplies.consumibles, supplies.id_proveedores, suppliers.nombre, 
+        supplies.cantidad FROM 
         `supplies` INNER JOIN `suppliers` on supplies.id_proveedores = suppliers.id 
         GROUP BY id_proveedores */
         $proveedores_elegibles = Suppliers::pluck('nombre','idSupplier');
