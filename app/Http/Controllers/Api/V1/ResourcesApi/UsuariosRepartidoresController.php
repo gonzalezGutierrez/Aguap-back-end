@@ -16,7 +16,7 @@ class UsuariosRepartidoresController extends Controller
 
         $estatus = 0; //activo
 
-        $repartidores = User::getUsuarios($like,$estatus)->getUsuariosByRol('repartidor');
+        $repartidores = User::getUsuarios($like,$estatus)->getUsuariosByRol(2);
 
         RepartidoresCollection::withoutWrapping();
 
