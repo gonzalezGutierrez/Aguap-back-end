@@ -10,6 +10,10 @@ class ServicioOrder extends Model
     protected $table = 'tbl_servicio_ordenes';
     protected $primaryKey = 'idServicioOrden';
 
+    protected $fillable = [
+        'idOrden','idServicio','cantidad','subtotal',
+    ];
+
     public function scopeGetServiciosByOrderId($query , $idOrden) {
         $today = Carbon::today();
         return $query->tblServicios()

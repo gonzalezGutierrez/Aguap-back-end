@@ -81,11 +81,18 @@ class Order extends Model
         });
     }
 
-
+    public function scopeGetOrderByIdClienteHitorial($query,$idUsuario) {
+        return $query->where('idCliente',$idUsuario)
+        ->where('estatus',1);
+    }
 
     public function scopeGetOrderByIdCliente($query,$idUsuario) {
         return $query->where('idCliente',$idUsuario)
             ->where('estatus',0);
+    }
+
+    public function scopeGetOrderByIdClienteHowHistorial($query,$idUsuario) {
+        return $query->where('idCliente',$idUsuario);
     }
 
     public function scopeGetOrder($query,$idOrder) {
@@ -107,10 +114,40 @@ class Order extends Model
         return $query->select(
             'tbl_ordenes.idOrden',
             'tbl_ordenes.fechaOrden',
+            'tbl_ubicaciones.latitude',
+            'tbl_ubicaciones.longitude',
             'tbl_ubicaciones.address',
+            'tbl_ordenes.idRepartidor',
             'tbl_usuarios.name as nombreRepartidor',
-            'tbl_usuarios.lastName as apellidoRepartidor'
+            'tbl_usuarios.lastName as apellidoRepartidor',
+            'tbl_ordenes.idCliente',
+            'tbl_ordenes.estatus'
         );
     }
 
+    public function scopeGetOrdersByDeliver($query,$idRepartidor){
+        return $query->tblUsuariosRepartidor()
+        ->where('idRepartidor',$idRepartidor)
+        ->where('estatus',0)
+        ->getDatas();
+    }
+
+    public function scopeGetOrdersByDeliverHistorial($query,$idRepartidor){
+        return $query->tblUsuariosRepartidor()
+        ->where('idRepartidor',$idRepartidor)
+        ->where('estatus',1)
+        ->getDatas();
+    }
+
+    public function scopeGetDatas($query){
+        return $query->select(
+            'tbl_ordenes.idOrden',
+            'tbl_ordenes.fechaOrden',
+            'tbl_ordenes.idRepartidor',
+            'tbl_usuarios.name as nombreRepartidor',
+            'tbl_usuarios.lastName as apellidoRepartidor',
+            'tbl_ordenes.idCliente',
+            'tbl_ordenes.estatus'
+        );
+    }
 }
