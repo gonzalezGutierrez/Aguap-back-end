@@ -79,7 +79,7 @@ Route::group(['prefix'=>'v1'],function(){
         Route::get('ordenes/historial',[\App\Http\Controllers\Api\V1\ResourcesApi\OrderController::class,'historialRepartidor']);
         Route::get('ordenes/activas',[\App\Http\Controllers\Api\V1\ResourcesApi\OrderController::class,'OrdenesActivas']);
         Route::get('orden',[\App\Http\Controllers\Api\V1\ResourcesApi\OrderController::class,'show']);
-
+        Route::get('search/orden',[\App\Http\Controllers\Api\V1\ResourcesApi\OrderController::class,'findOrder']);
         Route::post('orden/add-servicio',[\App\Http\Controllers\Api\V1\ResourcesApi\OrderController::class,'addServicio']);
 
     });

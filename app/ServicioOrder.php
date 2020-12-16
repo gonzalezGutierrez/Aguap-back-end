@@ -18,7 +18,7 @@ class ServicioOrder extends Model
         $today = Carbon::today();
         return $query->tblServicios()
             ->tblCostoServicios()
-            ->whereDate('tbl_costo_tipo_servicios.fechaExpiracion','<=',$today)
+            ->whereDate('tbl_costo_tipo_servicios.fechaExpiracion','>=',$today)
             ->groupBy('cat_servicios.idServicio')
             ->where('tbl_servicio_ordenes.idOrden',$idOrden)
             ->getAttributes();

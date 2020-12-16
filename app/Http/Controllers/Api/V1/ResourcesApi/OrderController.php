@@ -122,6 +122,23 @@ class OrderController extends Controller
             'msg'=>'pedidos activos'
         ],200);
     }
+
+//encontrar una orden valida
+    public function findOrder(Request $request){
+        $usuario = User::findOrFail($request->idCliente);
+        $order = Order::getOrderByIdCliente($usuario->idUsuario)->first();
+        if(!$order){
+            return response()->json([
+                'idOrder'=> 0,
+                'msg'=>'No hay orden en proceso'
+            ],200);
+        }
+        return response()->json([
+            'idOrder' => $order->idOrden,
+            'msg' => 'Orden en proceso'
+        ],200);
+    }
+
 //crear las ordenes
     public function store(Request $request) {
 

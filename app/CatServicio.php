@@ -15,7 +15,7 @@ class CatServicio extends Model
         $today = Carbon::today();
         return $query->tblCostoServicios()
             ->where('cat_servicios.eliminado',$status)
-            ->whereDate('tbl_costo_tipo_servicios.fechaExpiracion','<=',$today)
+            ->whereDate('tbl_costo_tipo_servicios.fechaExpiracion','>=',$today)
             ->groupBy('cat_servicios.idServicio')
             ->getAttributes();
     }
